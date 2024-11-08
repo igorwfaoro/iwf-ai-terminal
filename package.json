@@ -1,7 +1,7 @@
 {
   "name": "iwf-ai-terminal",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "A customizable CLI tool for querying Google Gemini AI directly from your terminal with markdown-formatted responses.",
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -14,9 +14,9 @@
     "ai": "./dist/index.js",
     "ai-config": "./dist/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["terminal", "ai", "dev"],
+  "author": "Igor Wilian Faoro <https://igorwfaoro.github.io>",
+  "license": "MIT",
   "devDependencies": {
     "@types/marked-terminal": "^6.1.1",
     "@types/node": "^22.9.0",
