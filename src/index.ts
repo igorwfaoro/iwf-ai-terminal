@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 
 import path from 'path';
-import { AiConfigCommand } from './commands/ai-config.command';
-import { AiCommand } from './commands/ai.command';
-import { Command } from './commands/contracts/command';
+import { Bootstrap } from './bootstrap';
+import { CommandRegistry } from './registry/command-registry';
 
-type CommandRunner = (args?: string[]) => Command;
+Bootstrap.load();
 
 const commandName = path.basename(process.argv[1]);
 const args = process.argv.slice(2);
 
-const commands: { [key: string]: CommandRunner } = {
-  'ai-config': () => new AiConfigCommand(),
-  ai: (args?: string[]) => new AiCommand(args!),
-};
+const command = CommandRegistry.get(commandName);
 
-commands[commandName](args).execute();
+if (command) {
+  command.execute(args);
+}

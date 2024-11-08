@@ -1,9 +1,11 @@
 import chalk from 'chalk';
-import { sanitizePrompt } from '../helpers/prompt.helper';
-import { Command } from './contracts/command';
-import { GeminiService } from '../services/gemini.service';
 import { marked } from 'marked';
-import { markedTerminal, TerminalRendererOptions } from 'marked-terminal';
+import { markedTerminal } from 'marked-terminal';
+import { EnvironmentHelper } from '../helpers/environment.helper';
+import { Command } from '../registry/command-registry';
+import { Inject } from '../registry/service-registry';
+import { AiGenerationService } from '../services/ai-generation.service';
+import { ExecutableCommand } from './contracts/executable-command';
 
 marked.use(
   markedTerminal({
@@ -17,36 +19,54 @@ marked.use(
     listitem: chalk.gray,
     table: chalk.gray,
     paragraph: chalk.gray,
-    link: chalk.cyan.underline,
+    link: chalk.cyan.underline
   }) as any
 );
 
-export class AiCommand extends Command {
-  private readonly geminiService: GeminiService;
+@Command('ai')
+export class AiCommand implements ExecutableCommand {
+  @Inject(AiGenerationService)
+  private readonly aiGenerationService!: AiGenerationService;
 
-  private readonly args: string[];
+  public async execute(args: string[]): Promise<void> {
+    const command = args.join(' ');
 
-  constructor(args: string[]) {
-    super();
-    this.geminiService = new GeminiService();
-    this.args = args;
-  }
+    const {
+      getOs,
+      getCurrentDir,
+      getShell,
+      getDesktopSession,
+      getTermType,
+      getLanguage,
+      getUsername
+    } = EnvironmentHelper;
 
-  public async execute(): Promise<void> {
-    const command = this.args.join(' ');
-    const prompt = `${sanitizePrompt(
-      command
-    )}\nPlease ALWAYS format your response in Markdown.`;
+    const prompt = `${command}
 
-    console.log(chalk.blue('Querying Gemini...\n'));
+      CONTEXT:
+      - Running terminal on ${getOs()};
+      - Current directory: ${getCurrentDir()};
+      - Shell: ${getShell()};
+      - Desktop session: ${getDesktopSession()};
+      - Terminal type: ${getTermType()};
+      - Language: ${getLanguage()};
+      - Logged in as: ${getUsername()};
 
-    const response = await this.geminiService.query(prompt);
+      INSTRUCTIONS:
+      - Always format response in Markdown;
+      - Be concise and to the point;
+      - Prioritize command examples, avoid extra explanations;
+    `;
+
+    console.log(chalk.blue('Querying...\n'));
+
+    const response = await this.aiGenerationService.query(prompt);
 
     if (!response) {
-      console.log(chalk.red('No response from Gemini.'));
+      console.log(chalk.red('No response.'));
       return;
     }
 
-    console.log(marked.parse(response));
+    console.log((marked.parse(response) as string).trim());
   }
 }
