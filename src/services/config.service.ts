@@ -12,7 +12,7 @@ export class ConfigService {
     if (!fs.existsSync(configPath)) {
       return {};
     }
-    const configData = fs.readFileSync(configPath, 'utf-8');
+    const configData = fs.readFileSync(configPath, 'utf-8') || '{}';
     return JSON.parse(configData);
   }
 
