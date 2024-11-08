@@ -17,12 +17,8 @@ Contributions are welcome!
 
 ## Installation
 
-Clone the repository and install dependencies:
-
 ```bash
-git clone https://github.com/your-username/iwf-ai-terminal.git
-cd iwf-ai-terminal
-npm install
+npm i -g iwf-ai-terminal
 ```
 
 ## Setting Up API Key
