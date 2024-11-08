@@ -1,6 +1,6 @@
 {
   "name": "iwf-ai-terminal",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A customizable CLI tool for querying Google Gemini AI directly from your terminal with markdown-formatted responses.",
   "main": "./dist/index.js",
   "scripts": {

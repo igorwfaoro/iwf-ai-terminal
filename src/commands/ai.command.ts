@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import { marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
 import { EnvironmentHelper } from '../helpers/environment.helper';
+import { LoaderHelper } from '../helpers/loader.helper';
 import { Command } from '../registry/command-registry';
 import { Inject } from '../registry/service-registry';
 import { AiGenerationService } from '../services/ai-generation.service';
@@ -58,9 +59,11 @@ export class AiCommand implements ExecutableCommand {
       - Prioritize command examples, avoid extra explanations;
     `;
 
-    console.log(chalk.blue('Querying...\n'));
+    const spinner = LoaderHelper.startSpinner();
 
     const response = await this.aiGenerationService.query(prompt);
+
+    LoaderHelper.stopSpinner(spinner, '----\n');
 
     if (!response) {
       console.log(chalk.red('No response.'));
